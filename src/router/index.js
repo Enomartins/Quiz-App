@@ -4,29 +4,39 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Dashboard from '../views/Dashboard.vue'
+import firebase from 'firebase'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/home',
+    path: '/',
     name: 'Home',
     component: Home
   },
   {
-    path: '/',
+    path: '/login',
     name: 'Login',
-    component: Login
+    component: Login,
+    meta: {
+      requiresGuest: true
+    }
   },
   {
     path: '/register',
     name: 'Register',
-    component: Register
+    component: Register,
+    meta: {
+      requiresGuest: true
+    }
   },
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: Dashboard
+    component: Dashboard,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/about',
@@ -40,6 +50,45 @@ const routes = [
 
 const router = new VueRouter({
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  // check for route is gaurded
+  if(to.matched.some(record => record.meta.requiresAuth)) {
+    // check if not logged in
+    if(!firebase.auth().currentUser) {
+      next({
+        path: '/login',
+        query: {
+          redirect: to.fullPath
+        }
+      })
+    }
+    else {
+      // proceed to route
+      next()
+    }
+  }
+
+  else if(to.matched.some(record => record.meta.requiresGuest)) {
+    // check if logged in
+    if(firebase.auth().currentUser) {
+      next({
+        path: '/dashboard',
+        query: {
+          redirect: to.fullPath
+        }
+      })
+    }
+    else {
+      // proceed to route
+      next()
+    }
+  }
+  else {
+    // proceed to route
+    next()
+  }
 })
 
 export default router

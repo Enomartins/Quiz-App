@@ -1,9 +1,11 @@
 <template>
   <div class="register">
       <div class="container w-100">
-      
-      <div>
-    <b-form @reset="onReset" @submit="onSubmit" v-if="show">
+        <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
+          {{message}}
+        </b-alert>
+    <div>
+    <b-form @reset="onReset" @submit="onSubmit">
       <b-form-group
         id="input-group-1"
         label="Email address:"
@@ -52,7 +54,8 @@
 </template>
 
 <script>
-// import firebase from "firebase/app"
+import firebase from "firebase/app"
+import 'firebase/auth'
 
 
 export default {
@@ -64,9 +67,10 @@ export default {
         email: '',
         form: {
           password: '',
-          email: '',
-          checked: []
-        }
+          email: ''
+        }, 
+        showDismissibleAlert: false,
+        message: ''
       }
     },
 
@@ -75,22 +79,26 @@ export default {
 
         e.preventDefault();
         
-        
-        // firebase.auth().createUserWithEmailAndPassword()
-        // .then((user) => {
-        //   console.log(user)
-        //   this.showDismissibleAlert = true;
-        //   // Signed in 
-        //   // ...
-        //   console.log("User created")
-        // })
-        // .catch((error) => {
-        //   var errorCode = error.code;
-        //   var errorMessage = error.message;
-        //   console.log(errorCode, errorMessage, "this is an error")
-        //   // ..
-        // });
-        // console.log("registering.....", this.email, this.password)
+
+        firebase.auth().createUserWithEmailAndPassword(this.form.email, this.form.password)
+        .then((user) => {
+          console.log(user)
+          
+          this.showDismissibleAlert = true;
+          if (user.user.email) {
+          this.message = "User created"
+          }
+          else this.message = "Email or Password Error"
+        })
+        .catch((error) => {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          console.log(errorCode, errorMessage, "this is an error")
+          this.showDismissibleAlert = true;
+          this.message = "Email or Password Error"
+          // ..
+        });
+        console.log("registering.....", this.email, this.password)
         
        
       },

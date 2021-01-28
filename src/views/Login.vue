@@ -1,9 +1,11 @@
 <template>
   <div class="login">
       <div class="container w-100">
-      
+        <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
+          {{message}}
+        </b-alert>
       <div>
-    <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+    <b-form @submit="onSubmit" @reset="onReset">
       <b-form-group
         id="input-group-1"
         label="Email address:"
@@ -22,24 +24,18 @@
       <b-form-group id="input-group-2" label="Your Name:" label-for="input-2">
         <b-form-input
           id="input-2"
-          v-model="form.name"
-          placeholder="Enter name"
+          v-model="form.password"
+          placeholder="Enter Password"
           required
         ></b-form-input>
       </b-form-group>
 
       
 
-      <b-form-group id="input-group-4" v-slot="{ ariaDescribedby }">
-        <b-form-checkbox-group
-          v-model="form.checked"
-          id="checkboxes-4"
-          :aria-describedby="ariaDescribedby"
-        >
-          <b-form-checkbox value="me">Check me out</b-form-checkbox>
-          <b-form-checkbox value="that">Check that out</b-form-checkbox>
-        </b-form-checkbox-group>
-      </b-form-group>
+      
+
+      <b-button @click.prevent="onSubmit" type="submit" variant="primary">Submit</b-button>
+      <b-button type="reset" variant="danger">Reset</b-button>
 
     </b-form>
     
@@ -62,9 +58,10 @@ export default {
         email: '',
         form: {
           name: '',
-          email: '',
-          checked: []
-        }
+          password: ''
+        },
+        showDismissibleAlert: false,
+        message: ''
       }
     },
 
@@ -78,17 +75,23 @@ export default {
         firebase.auth().signInWithEmailAndPassword(this.form.email, this.form.password)
         .then((user) => {
           console.log(user)
+          
           this.showDismissibleAlert = true;
-          // Signed in 
-          // ...
-          console.log("Signed in")
+          this.message = "Login successfully"
+          this.$router.push('/dashboard')
+          
         })
         .catch((error) => {
           var errorCode = error.code;
           var errorMessage = error.message;
-          console.log(errorCode, errorMessage)
+          console.log(errorCode, errorMessage, "this is an error")
+          this.showDismissibleAlert = true;
+          this.message = "Email or Password Error"
           // ..
         });
+        console.log("login in.....", this.email, this.password)
+        
+       
       }
     }
 
