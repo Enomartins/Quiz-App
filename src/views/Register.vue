@@ -2,37 +2,57 @@
   <div class="register">
       <div class="container w-100">
       
-      <form class="float-right col-md-5 my-5" @submit="register">
-        <h2 class="mb-3 text-center">Register</h2>
-      <div class="form-group">
-        <label for="exampleInputEmail1">Email address</label>
-        <input v-model="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-      </div>
-      <div class="form-group">
-        <label for="exampleInputPassword1">Password</label>
-        <input v-model="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-      </div>
-      <div class="form-check">
-        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-        <label class="form-check-label" for="exampleCheck1">Check me out</label>
-      </div>
+      <div>
+    <b-form @reset="onReset" @submit="onSubmit" v-if="show">
+      <b-form-group
+        id="input-group-1"
+        label="Email address:"
+        label-for="input-1"
+        description="We'll never share your email with anyone else."
+      >
+        <b-form-input
+          id="input-1"
+          v-model="form.email"
+          type="email"
+          placeholder="Enter email"
+          required
+        ></b-form-input>
+      </b-form-group>
 
-      <div class="my-3">
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </div>
+      <b-form-group id="input-group-2" label="Your Password:" label-for="input-2">
+        <b-form-input
+          id="input-2"
+          v-model="form.password"
+          placeholder="Enter Password"
+          required
+        ></b-form-input>
+      </b-form-group>
 
-      <router-link to="/">
-      Already have an account? Login Here
-    </router-link>
-    </form>
+      
+
+      <b-form-group id="input-group-4" v-slot="{ ariaDescribedby }">
+        <b-form-checkbox-group
+          v-model="form.checked"
+          id="checkboxes-4"
+          :aria-describedby="ariaDescribedby"
+        >
+          <b-form-checkbox value="me">Check me out</b-form-checkbox>
+          <b-form-checkbox value="that">Check that out</b-form-checkbox>
+        </b-form-checkbox-group>
+      </b-form-group>
+
+      <b-button @click.prevent="onSubmit" type="submit" variant="primary">Submit</b-button>
+      <b-button type="reset" variant="danger">Reset</b-button>
+    </b-form>
+    
+  </div>
 
     </div>
   </div>
 </template>
 
 <script>
-import firebase from "firebase/app"
+// import firebase from "firebase/app"
 
 
 export default {
@@ -40,20 +60,42 @@ export default {
 
     data () {
       return {
+        show: true,
         email: '',
-        password: ''
+        form: {
+          password: '',
+          email: '',
+          checked: []
+        }
       }
     },
 
     methods: {
-      register() {
+      onSubmit(e) {
+
+        e.preventDefault();
+        
+        
+        // firebase.auth().createUserWithEmailAndPassword()
+        // .then((user) => {
+        //   console.log(user)
+        //   this.showDismissibleAlert = true;
+        //   // Signed in 
+        //   // ...
+        //   console.log("User created")
+        // })
+        // .catch((error) => {
+        //   var errorCode = error.code;
+        //   var errorMessage = error.message;
+        //   console.log(errorCode, errorMessage, "this is an error")
+        //   // ..
+        // });
         // console.log("registering.....", this.email, this.password)
-        firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
-        .then(user => {
-          console.log(user)
-          this.$router.replace({name: 'Dashboard'})
-        })
-        .catch(error => console.log(error))
+        
+       
+      },
+      onReset() {
+        console.log('Reset reister')
       }
     }
 
