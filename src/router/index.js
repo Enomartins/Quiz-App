@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Dashboard from '../views/Dashboard.vue'
+import Quiz from '../views/Quiz.vue'
 import firebase from 'firebase'
 
 Vue.use(VueRouter)
@@ -34,6 +35,14 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: Dashboard,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/quiz',
+    name: 'Quiz',
+    component: Quiz,
     meta: {
       requiresAuth: true
     }
